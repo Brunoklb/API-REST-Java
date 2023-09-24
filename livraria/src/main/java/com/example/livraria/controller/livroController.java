@@ -1,22 +1,14 @@
 package com.example.livraria.controller;
 
-import java.util.List;
-import java.util.Optional;
-
+import com.example.livraria.model.Livro;
+import com.example.livraria.repository.LivroRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.ResponseEntity.BodyBuilder;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import com.example.livraria.model.Livro;
-import com.example.livraria.repository.LivroRepository;
+import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/livro")
@@ -39,20 +31,17 @@ public class livroController {
 	// Create book
 	@PostMapping
 	public ResponseEntity<LivroResponse> createBook(@RequestBody Livro livro) {
-		// Verifique se um livro com o mesmo ISBN já existe
 		if (livroRepository.existsByIsbn(livro.getIsbn())) {
 			String mensagem = "Já existe um livro com o ISBN: " + livro.getIsbn();
 			LivroResponse response = new LivroResponse(livro, mensagem);
 			return ResponseEntity.badRequest().body(response);
 		}
 
-		// Verifique se o estoque é válido (não negativo)
 		if (livro.getStock() < 0) {
 			LivroResponse response = new LivroResponse(livro, "O estoque não pode ser negativo");
 			return ResponseEntity.badRequest().body(response);
 		}
 
-		// Salve o livro se todas as verificações passarem
 		Livro livroSalvo = livroRepository.save(livro);
 		LivroResponse response = new LivroResponse(livroSalvo, "Livro criado com sucesso");
 		return ResponseEntity.created(null).body(response);
@@ -66,7 +55,7 @@ public class livroController {
 		if (livroToDeleteOptional.isPresent()) {
 			Livro livroToDelete = livroToDeleteOptional.get();
 
-			if (livroToDelete.getStock() > 0) {
+			if (livroToDelete.getStock() != null && livroToDelete.getStock() > 0) {
 				return ResponseEntity.badRequest()
 						.body("Não é permitido excluir o livro, pois ainda há cópias em estoque.");
 			} else {
@@ -77,6 +66,7 @@ public class livroController {
 			return ((BodyBuilder) ResponseEntity.notFound()).body("Livro não encontrado com o ID: " + id);
 		}
 	}
+
 
 	// Atualizar livro por ID
 	@PutMapping("/{id}")

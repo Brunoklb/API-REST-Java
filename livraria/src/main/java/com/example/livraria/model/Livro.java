@@ -1,12 +1,11 @@
 package com.example.livraria.model;
 
-import java.util.Objects;
-
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+
+import java.util.Objects;
 
 @Entity
 public class Livro {
@@ -21,6 +20,13 @@ public class Livro {
 	private Integer numberOfRatings;
 	private Integer stock;
 	private int userRating;
+
+	public Livro(long l, String s, String s1, String s2, double v, double v1, int i, int i1, int i2) {
+	}
+
+	public Livro() {
+		this.stock = 0;
+	}
 
 	public Long getId() {
 		return id;

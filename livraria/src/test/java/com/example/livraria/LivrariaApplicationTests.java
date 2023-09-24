@@ -8,6 +8,7 @@ class LivrariaApplicationTests {
 
 	@Test
 	void contextLoads() {
+		
 	}
 
 }
